@@ -57,6 +57,10 @@ To run the script, the syntax is:
 You can specified something parameters
 
 ```none
+usage: ./jenkins [options...]
+
+valid options are:
+
 -u  Username jenkins. Use with -p
 -p  Password of the user jenkins. Use with -u
 -h  help :)
