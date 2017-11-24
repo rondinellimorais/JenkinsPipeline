@@ -24,6 +24,7 @@ custom name continue onto the next step.
 ### Generating a new SSH key pair
 
 1. To generate a new SSH key, use the following command:
+
 **GNU/Linux / macOS:**
 ```
 ssh-keygen -t rsa -C "GitLab" -b 4096
@@ -35,6 +36,7 @@ PuttyGen
 and follow this documentation article to generate a SSH key pair.
 
 2. Next, you will be prompted to input a file path to save your key pair to.
+
 If you don't already have an SSH key pair use the suggested path by pressing
 enter. Using the suggested path will allow your SSH client
 to automatically use the key pair with no additional configuration.
