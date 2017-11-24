@@ -56,12 +56,42 @@ You can specified something parameters
 
 ```none
 -u  Username jenkins. Use with -p
--p  Password of username jenkins. Use with -u
+-p  Password of the user jenkins. Use with -u
 -h  help :)
 -s  To specify jenkins URL. (We recomend edit script e chenge var 'JENKINS_SERVER_URL'
+
+When -u or -p is not specified, the script use ssh public key
 ```
 
 # Troubleshoot
+While execution of script, you can received the error below:
+
+### Error #1
+```
+hudson.remoting.RequestAbortedException: java.io.StreamCorruptedException: invalid stream header: 0A0A0A0A
+```
+
+### Solution #1
+This is probably a result of **hudson.diyChunking**.
+
+Check if diyChunking is enabled via the Script Console (JENKINS_URL/script) by running:
+
+```
+println System.getProperty("hudson.diyChunking")
+```
+
+If Result = true then read on.
+
+You can disable diyChunking on the master by adding the Jenkins startup arg: `-Dhudson.diyChunking=false`. See How to add Java arguments to Jenkins if you need help.
+
+#### Edit Jenkins startup arg
+```
+vim /etc/rc.d/init.d/jenkins
+```
+Edit the line:
+
+
+References: https://support.cloudbees.com/hc/en-us/articles/226235268-Jenkins-CLI-returns-invalid-stream-header-
 
 # Author
 Rondinelli Morais, rondinellimorais@gmail.com
