@@ -71,7 +71,6 @@ While execution of script, you can received the error below:
 hudson.remoting.RequestAbortedException: java.io.StreamCorruptedException: invalid stream header: 0A0A0A0A
 ```
 
-### Solution #1
 This is probably a result of **hudson.diyChunking**.
 
 Check if diyChunking is enabled via the Script Console (JENKINS_URL/script) by running:
@@ -100,7 +99,6 @@ References: https://support.cloudbees.com/hc/en-us/articles/226235268-Jenkins-CL
 ERROR: No such job 'JOBNAME'
 ```
 
-### Solution #1
 I had the same behavior and found out that allowing anonymous read access in the [global security section](https://i.stack.imgur.com/FEO2W.png) fixed it. It is still mandatory to specify --username and --password to access the resource.
 
 References: https://stackoverflow.com/questions/30066657/jenkins-cant-found-the-job-when-build-job-why
