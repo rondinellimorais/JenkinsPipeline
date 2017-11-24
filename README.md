@@ -31,7 +31,7 @@ custom name continue onto the next step.
 
 **GNU/Linux / macOS:**
 ```
-ssh-keygen -t rsa -C "Jenkins" -b 4096
+ssh-keygen -t rsa
 ```
 
 ## Credentials
