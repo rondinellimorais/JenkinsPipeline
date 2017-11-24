@@ -58,7 +58,7 @@ You can specified something parameters
 -u  Username jenkins. Use with -p
 -p  Password of the user jenkins. Use with -u
 -h  help :)
--s  To specify jenkins URL. (We recomend edit script e chenge var 'JENKINS_SERVER_URL'
+-s  To specify jenkins URL. (We recommend edit script e change the var JENKINS SERVER URL)
 
 When -u or -p is not specified, the script use ssh public key
 ```
