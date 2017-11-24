@@ -39,7 +39,11 @@ Last step, paste the **ssh public key** into the [SSH keys section](https://jenk
 Now you can go to next step **Usign**
 
 ## Credentials
-Alternatively you can log in using username and password
+Alternatively you can log in using username and password. Follow the commands:
+
+```bash
+./jenkins -u USER_NAME -p PASSWORD
+```
 
 # Using
 
