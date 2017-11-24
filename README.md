@@ -36,7 +36,7 @@ ssh-keygen -t rsa
 
 Last step, paste the **ssh public key** into the [SSH keys section](https://jenkins.io/doc/book/resources/managing/cli-adding-ssh-public-keys.png) at [http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure](http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure)
 
-Now you can go to next step **Usign**
+Now you can go to next step **Usage**
 
 ## Credentials
 Alternatively you can log in using username and password. Follow the commands:
@@ -44,6 +44,8 @@ Alternatively you can log in using username and password. Follow the commands:
 ```bash
 ./jenkins -u USER_NAME -p PASSWORD
 ```
+
+Now you can go to next step **Usage**
 
 # Usage
 To run the script, the syntax is:
