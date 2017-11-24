@@ -34,5 +34,7 @@ custom name continue onto the next step.
 ssh-keygen -t rsa
 ```
 
+Paste the **ssh public key** into the [SSH keys section](https://jenkins.io/doc/book/resources/managing/cli-adding-ssh-public-keys.png) at http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure
+
 ## Credentials
 Alternatively you can log in using username and password
