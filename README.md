@@ -46,6 +46,20 @@ Alternatively you can log in using username and password. Follow the commands:
 ```
 
 # Using
+To run the script, the syntax is:
+
+```bash
+./jenkins
+```
+
+You can specified something parameters
+
+```none
+-u  Username jenkins. Use with -p
+-p  Password of username jenkins. Use with -u
+-h  help :)
+-s  To specify jenkins URL. (We recomend edit script e chenge var 'JENKINS_SERVER_URL'
+```
 
 # Troubleshoot
 
