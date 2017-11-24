@@ -95,5 +95,15 @@ JAVA_CMD="$JENKINS_JAVA_CMD $JENKINS_JAVA_OPTIONS -DJENKINS_HOME=$JENKINS_HOME -
 
 References: https://support.cloudbees.com/hc/en-us/articles/226235268-Jenkins-CLI-returns-invalid-stream-header-
 
+### Error #2
+```
+ERROR: No such job 'JOBNAME'
+```
+
+### Solution #1
+I had the same behavior and found out that allowing anonymous read access in the [global security section](https://i.stack.imgur.com/FEO2W.png) fixed it. It is still mandatory to specify --username and --password to access the resource.
+
+References: https://stackoverflow.com/questions/30066657/jenkins-cant-found-the-job-when-build-job-why
+
 # Author
 Rondinelli Morais, rondinellimorais@gmail.com
