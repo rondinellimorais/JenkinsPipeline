@@ -33,3 +33,6 @@ custom name continue onto the next step.
 ```
 ssh-keygen -t rsa -C "Jenkins" -b 4096
 ```
+
+## Credentials
+Alternatively you can log in using username and password
