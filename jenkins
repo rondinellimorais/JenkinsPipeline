@@ -169,10 +169,13 @@ buildJob(){
 
 showHelp(){
 
-    echo -e "\n-u  Username jenkins. Use with -p"
-    echo -e "-p  Password of the user jenkins. Use with -u"
-    echo -e "-h  help :)"
-    echo -e "-s  To specify jenkins URL. (We recomend edit script e chenge var JENKINS_SERVER_URL)\n"
+    echo -e "usage: ./jenkins [options...]\n"
+    echo -e "valid options are:\n"
+
+    echo -e "   -u  Username jenkins. Use with -p"
+    echo -e "   -p  Password of the user jenkins. Use with -u"
+    echo -e "   -h  help :)"
+    echo -e "   -s  To specify jenkins URL. (We recomend edit script e chenge var JENKINS_SERVER_URL)\n"
     echo -e "When -u or -p is not specified, the script use ${TEXT_BOLD}ssh public key${TEXT_NOMRAL} \n"
 }
 
