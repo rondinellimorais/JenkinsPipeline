@@ -14,7 +14,7 @@
 
 # ============================================================
 #local properties
-export JENKINS_SERVER_URL="http://10.28.0.66:8081"
+export JENKINS_SERVER_URL="YOUR_SERVER_URL_HERE"
 export TEXT_BOLD=`tput bold`
 export TEXT_NOMRAL=`tput sgr0`
 export RED='\033[1;31m'
@@ -29,15 +29,23 @@ bindArgs() {
     export USE_AUTH=false
     export SHOW_HELP=false
 
-    while getopts u:p:h option
+    while getopts "u:p:h:s:" option
     do
         case "${option}"
         in
             u) USER=${OPTARG};;
             p) PASSWORD=${OPTARG};;
             h) SHOW_HELP=true;;
+            s) JENKINS_SERVER_URL=${OPTARG};;
      esac
     done
+
+    # debug
+    # ===============
+    # echo "jenkin url: ${JENKINS_SERVER_URL}"
+    # echo "user: ${USER}"
+    # echo "password: ${PASSWORD}"
+    # echo "show help?: ${SHOW_HELP}"
 
     # show help
     if [ ${SHOW_HELP} = true ]; then
@@ -161,5 +169,16 @@ buildJob(){
 # check args
 bindArgs $@
 
-# start script
-init
+# dont replace 'YOUR_SERVER_URL_HERE' string below
+if [ "$JENKINS_SERVER_URL" == "YOUR_SERVER_URL_HERE" ]; then
+    echo -e "${RED}${TEXT_BOLD}'YOUR_SERVER_URL_HERE' is not valid URL! Please, edit jenkins script or use the option -s YOU_JENKINS_SERVER_URL ${TEXT_NOMRAL}${NC} \n"
+    exit 1
+else
+    # start script
+    init
+fi
+
+
+
+
+
