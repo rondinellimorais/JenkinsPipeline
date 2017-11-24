@@ -1,12 +1,10 @@
 # JenkinsPipeline
-
-## Overview
 This is a pipeline for build a jobs on command line.
 
 # Authentication
 
 ## SSH key pair
-By default, this script authenticates with SSH key pair
+By default, this script authenticates with SSH key pair.
 
 ### Locating an existing SSH key pair
 Before generating a new SSH key check if your system already has one
@@ -25,3 +23,6 @@ custom name continue onto the next step.
 
 ### Generating a new SSH key pair
 
+
+1. One
+    GNU/Linux / macOS:
