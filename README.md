@@ -90,7 +90,7 @@ vim /etc/rc.d/init.d/jenkins
 ```
 Edit the line:
 ```
-JAVA_CMD="$JENKINS_JAVA_CMD $JENKINS_JAVA_OPTIONS -DJENKINS_HOME=$JENKINS_HOME -jar ***-Dhudson.diyChunking=false*** $JENKINS_WAR"
+JAVA_CMD="$JENKINS_JAVA_CMD $JENKINS_JAVA_OPTIONS -DJENKINS_HOME=$JENKINS_HOME -jar -Dhudson.diyChunking=false $JENKINS_WAR"
 ```
 
 References: https://support.cloudbees.com/hc/en-us/articles/226235268-Jenkins-CLI-returns-invalid-stream-header-
