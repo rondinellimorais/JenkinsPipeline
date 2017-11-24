@@ -45,7 +45,7 @@ Alternatively you can log in using username and password. Follow the commands:
 ./jenkins -u USER_NAME -p PASSWORD
 ```
 
-# Using
+# Usage
 To run the script, the syntax is:
 
 ```bash
