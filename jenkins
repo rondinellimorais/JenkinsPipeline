@@ -29,14 +29,14 @@ bindArgs() {
     export USE_AUTH=false
     export SHOW_HELP=false
 
-    while getopts "u:p:h:s:" option
+    while getopts u:p:s:h option
     do
         case "${option}"
         in
             u) USER=${OPTARG};;
             p) PASSWORD=${OPTARG};;
-            h) SHOW_HELP=true;;
             s) JENKINS_SERVER_URL=${OPTARG};;
+            h) SHOW_HELP=true;;
      esac
     done
 
@@ -46,10 +46,11 @@ bindArgs() {
     # echo "user: ${USER}"
     # echo "password: ${PASSWORD}"
     # echo "show help?: ${SHOW_HELP}"
+    # exit 0
 
     # show help
     if [ ${SHOW_HELP} = true ]; then
-        echo "show help"
+        showHelp
         exit 0
     fi
 
@@ -164,6 +165,15 @@ buildJob(){
     echo -e "\n===== ${TEXT_BOLD} View output log the link below ${TEXT_NOMRAL} =====\n"
     printf "${TEXT_BOLD} \t\e[3;4;33m${JENKINS_SERVER_URL}/job/${job}/${build_number}/console\n\e[0m ${TEXT_NOMRAL}\n\n"
     echo -e "Great! \xF0\x9F\x8D\xBA\n\n"
+}
+
+showHelp(){
+
+    echo -e "\n-u  Username jenkins. Use with -p"
+    echo -e "-p  Password of the user jenkins. Use with -u"
+    echo -e "-h  help :)"
+    echo -e "-s  To specify jenkins URL. (We recomend edit script e chenge var JENKINS_SERVER_URL)\n"
+    echo -e "When -u or -p is not specified, the script use ${TEXT_BOLD}ssh public key${TEXT_NOMRAL} \n"
 }
 
 # check args
