@@ -4,7 +4,7 @@ This is a pipeline for build a jobs on command line.
 Before you start, you need edit var on jenkins script for include the URL of your jenkins server, just change line below:
 
 ```bash
-export JENKINS_SERVER_URL="http://10.28.0.66:8081"
+export JENKINS_SERVER_URL="YOUR_SERVER_URL_HERE"
 ```
 
 # Authentication
