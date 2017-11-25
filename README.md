@@ -1,12 +1,6 @@
 # JenkinsPipeline
 This is a pipeline for build a jobs on command line.
 
-Before you start, you need edit `var` on jenkins script for include the URL of your jenkins server, just change line below:
-
-```bash
-export JENKINS_SERVER_URL="YOUR_SERVER_URL_HERE"
-```
-
 # Authentication
 By default, this script authenticates with SSH key pair.
 
@@ -64,7 +58,7 @@ valid options are:
 -u  Username jenkins. Use with -p
 -p  Password of the user jenkins. Use with -u
 -h  help :)
--s  To specify jenkins URL. (We recommend edit script e change the var JENKINS SERVER URL)
+-s  To specify jenkins URL. (We recommend edit script e change the var JENKINS_SERVER_URL)
 
 When -u or -p is not specified, the script use ssh public key
 ```
@@ -96,6 +90,10 @@ vim /etc/rc.d/init.d/jenkins
 Edit the line:
 ```
 JAVA_CMD="$JENKINS_JAVA_CMD $JENKINS_JAVA_OPTIONS -DJENKINS_HOME=$JENKINS_HOME -jar -Dhudson.diyChunking=false $JENKINS_WAR"
+```
+Restart jenkins service
+```
+service jenkins restart
 ```
 
 References: https://support.cloudbees.com/hc/en-us/articles/226235268-Jenkins-CLI-returns-invalid-stream-header-
