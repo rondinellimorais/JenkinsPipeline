@@ -8,8 +8,7 @@ By default, this script authenticates with SSH key pair.
 
 ### Locating an existing SSH key pair
 Before generating a new SSH key check if your system already has one
-at the default location by opening a shell, or Command Prompt on Windows,
-and running the following command:
+at the default location by opening a shell and running the following command:
 
 ##### GNU/Linux / macOS / PowerShell:
 ```
