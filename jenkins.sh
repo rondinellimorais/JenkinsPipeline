@@ -26,16 +26,21 @@ bindArgs() {
     # vars of arguments
     export USER
     export PASSWORD
+    export PARAMETER_KEY
+    export PARAMETER_VALUE
     export USE_AUTH=false
     export SHOW_HELP=false
+    export USE_PARAMETER=false
 
-    while getopts u:p:s:h option
+    while getopts u:p:s:k:v:h option
     do
         case "${option}"
         in
             u) USER=${OPTARG};;
             p) PASSWORD=${OPTARG};;
             s) JENKINS_SERVER_URL=${OPTARG};;
+            k) PARAMETER_KEY=${OPTARG};;
+            v) PARAMETER_VALUE=${OPTARG};;
             h) SHOW_HELP=true;;
      esac
     done
@@ -59,6 +64,13 @@ bindArgs() {
         USE_AUTH=true
     else
         USE_AUTH=false
+    fi
+
+    # check if contains jenkins parameter
+    if [[ -n "$PARAMETER_KEY" && -n "$PARAMETER_VALUE" ]]; then
+        USE_PARAMETER=true
+    else
+        USE_PARAMETER=false
     fi
 }
 
@@ -145,13 +157,33 @@ buildJob(){
     echo -e "\n===== Building job ${TEXT_BOLD}${job} ${TEXT_NOMRAL} =====\n"
     
     # command for build job
+    declare -a  JENKINS_COMMAND
+    JENKINS_COMMAND[${#JENKINS_COMMAND[@]}]="java -jar jenkins-cli.jar"
+
+    # ==============================
+    # authentication method
+    # ==============================
     if [ ${USE_AUTH} = true ]; then
         # user authentication
-        build_result=$(java -jar jenkins-cli.jar -noKeyAuth -s ${JENKINS_SERVER_URL} build ${job} --username ${USER} --password ${PASSWORD} -w)
+        JENKINS_COMMAND[${#JENKINS_COMMAND[@]}]=" -noKeyAuth -s ${JENKINS_SERVER_URL} build ${job} --username ${USER} --password ${PASSWORD} "
     else
         # ssh authentication
-        build_result=$(java -jar jenkins-cli.jar -s ${JENKINS_SERVER_URL} build ${job} -w)
+        JENKINS_COMMAND[${#JENKINS_COMMAND[@]}]=" -s ${JENKINS_SERVER_URL} build ${job} "
     fi
+
+    # ==============================
+    # jenkins parameter
+    # ==============================
+    if [ ${USE_PARAMETER} = true ]; then
+        JENKINS_COMMAND[${#JENKINS_COMMAND[@]}]=" -p ${PARAMETER_KEY}=${PARAMETER_VALUE} "
+    fi
+
+    # end of command
+    JENKINS_COMMAND[${#JENKINS_COMMAND[@]}]=" -w "
+
+    # result of jebkins command
+    # echo "jenkins command: ${JENKINS_COMMAND[@]}"
+    build_result=`echo ${JENKINS_COMMAND[@]} | bash`
 
     # http://www.iemoji.com/view/emoji/784/objects/wrench
     # echo -e "\xF0\x9F\x94\xA8 \xF0\x9F\x94\xA7"
@@ -175,6 +207,8 @@ showHelp(){
     echo -e "   -u  Username jenkins. Use with -p"
     echo -e "   -p  Password of the user jenkins. Use with -u"
     echo -e "   -h  help :)"
+    echo -e "   -k  Jenkins parameter name. Use with -v"
+    echo -e "   -v  Jenkins parameter value. Use with -k"
     echo -e "   -s  To specify jenkins URL. (We recomend edit script e chenge var JENKINS_SERVER_URL)\n"
     echo -e "When -u or -p is not specified, the script use ${TEXT_BOLD}ssh public key${TEXT_NOMRAL} \n"
 }
