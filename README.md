@@ -62,7 +62,7 @@ valid options are:
 When -u or -p is not specified, the script use ssh public key
 ```
 
-# Troubleshoot
+# Troubleshooting
 While execution of script, you can received the error below:
 
 ### Error #1
