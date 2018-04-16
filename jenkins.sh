@@ -77,16 +77,11 @@ bindArgs() {
 
 init(){
 
-    if [ -d ~/.ssh ]; then
-
-        # list jobs
+    if [ -d ~/.ssh ] || [ ${USE_AUTH} = true ]; then
+        # list jobs when authentication is via ssh or user and password
         listJobs
     else
-        echo -e "\n ${RED}${TEXT_BOLD} You need create the ssh key. Just follow this commands: ${TEXT_NOMRAL}${NC} \n"
-        echo -e "  1. ssh-keygen -t rsa"
-        echo -e "  2. cat ~/.ssh/id_rsa.pub"
-        echo -e "  3. Copy the resulting public key into the SSH keys section on Jenkins \n"
-        exit 0
+        showAuthenticationPrompt
     fi
 }
 
@@ -143,6 +138,7 @@ showJobs(){
 
             # build selected job
             buildJob $opt
+            # aqui: rondinelli morais
             break
         else 
             case $opt in
@@ -202,9 +198,9 @@ buildJob(){
 
 showHelp(){
 
+    # usage
     echo -e "usage: ./jenkins [options...]\n"
-    echo -e "valid options are:\n"
-
+    echo -e "${GREEN}${TEXT_BOLD}VALID OPTIONS ARE:${TEXT_NOMRAL}${NC}\n"
     echo -e "   -u  Username jenkins. Use with -p"
     echo -e "   -p  Password of the user jenkins. Use with -u"
     echo -e "   -h  help :)"
@@ -212,6 +208,54 @@ showHelp(){
     echo -e "   -v  Jenkins parameter value. Use with -k"
     echo -e "   -s  To specify jenkins URL. (We recomend edit script e chenge var JENKINS_SERVER_URL)\n"
     echo -e "When -u or -p is not specified, the script use ${TEXT_BOLD}ssh public key${TEXT_NOMRAL} \n"
+
+    # ssh public key authentication
+    echo -e "${GREEN}${TEXT_BOLD}SSH PUBLIC KEY AUTHENTICATION:${TEXT_NOMRAL}${NC}\n"
+    echo -e "You need create the ssh key. Just follow this commands:\n"
+    echo -e "   1. ssh-keygen -t rsa"
+    echo -e "   2. cat ~/.ssh/id_rsa.pub"
+    echo -e "   3. Copy the resulting public key into the SSH keys section on Jenkins \n"
+
+    # support
+    echo -e "${GREEN}${TEXT_BOLD}CONTACT:${TEXT_NOMRAL}${NC}\n"
+    echo -e "Author...: Rondinelli Morais"
+    echo -e "Twitter..: @rmorais"
+    echo -e "Email....: rondinellimorais@gmail.com\n"
+}
+
+showAuthenticationPrompt() {
+
+    echo -e "\n${GREEN}${TEXT_BOLD}JENKINS AUTHENTICATION:${TEXT_NOMRAL}${NC}\n"
+
+    # USER is a global var
+    while echo -n "     * ${TEXT_BOLD} Enter jenkins [ username ] : ${TEXT_NOMRAL}"; read -r USER;
+    do
+        if [ ! -z "${USER}" ]; then
+            break
+        fi
+    done
+
+    # PASSWORD is a global var
+    while echo -n "     * ${TEXT_BOLD} Enter jenkins [ password ] : ${TEXT_NOMRAL}"; read -r -s PASSWORD;
+    do
+        echo "" # new line
+        if [ ! -z "${PASSWORD}" ]; then
+            break
+        fi
+    done
+
+    # check if authentication is enable
+    if [[ -n "$USER" && -n "$PASSWORD" ]]; then
+        USE_AUTH=true
+    else
+        USE_AUTH=false
+    fi
+
+    # feedback message
+    echo -e "\nPlease wait..."
+
+    # list jobs
+    listJobs
 }
 
 # check args
