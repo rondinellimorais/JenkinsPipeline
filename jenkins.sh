@@ -61,14 +61,14 @@ bindArgs() {
     fi
 
     # check if authentication is enable
-    if [[ -n "$USER" && -n "$PASSWORD" ]]; then
+    if [[ ! -z "$USER" && ! -z "$PASSWORD" ]]; then
         USE_AUTH=true
     else
         USE_AUTH=false
     fi
 
     # check if contains jenkins parameter
-    if [[ -n "$PARAMETER_KEY" && -n "$PARAMETER_VALUE" ]]; then
+    if [[ ! -z "$PARAMETER_KEY" && ! -z "$PARAMETER_VALUE" ]]; then
         USE_PARAMETER=true
     else
         USE_PARAMETER=false
@@ -136,9 +136,18 @@ showJobs(){
     do
         if [ ! -z "$opt" ]; then
 
-            # build selected job
-            buildJob $opt
-            # aqui: rondinelli morais
+            # check if contains jenkins parameter
+            if [[ ! -z "$PARAMETER_KEY" && ! -z "$PARAMETER_VALUE" ]]; then
+                
+                # build selected job
+                buildJob $opt
+
+            else
+                
+                # check job has parameter
+                showJobParameterQuestion $opt
+            fi
+
             break
         else 
             case $opt in
@@ -225,7 +234,7 @@ showHelp(){
 
 showAuthenticationPrompt() {
 
-    echo -e "\n${GREEN}${TEXT_BOLD}JENKINS AUTHENTICATION:${TEXT_NOMRAL}${NC}\n"
+    echo -e "\n${GREEN}${TEXT_BOLD}Jenkins authentication:${TEXT_NOMRAL}${NC}\n"
 
     # USER is a global var
     while echo -n "     * ${TEXT_BOLD} Enter jenkins [ username ] : ${TEXT_NOMRAL}"; read -r USER;
@@ -256,6 +265,52 @@ showAuthenticationPrompt() {
 
     # list jobs
     listJobs
+}
+
+showJobParameterQuestion(){
+
+    echo "" # new build
+    while true; do
+
+        echo -n -e "${GREEN}${TEXT_BOLD}Does '$1' have any parameters?${TEXT_NOMRAL}${NC}${TEXT_BOLD} [Y / n] : ${NC}"; read YES_NO_OPT
+        case $YES_NO_OPT in
+            [Yy]* ) 
+                showJobParameterPrompt $1
+                break;;
+
+            [Nn]* ) 
+                buildJob $1;;
+                * ) ;;
+        esac
+    done
+}
+
+showJobParameterPrompt(){
+
+    # PARAMETER_KEY is a global var
+    echo "" # new line
+    while echo -n "     * ${TEXT_BOLD} Enter '$1' parameter name : ${TEXT_NOMRAL}"; read -r PARAMETER_KEY;
+    do
+        if [ ! -z "${PARAMETER_KEY}" ]; then
+            break
+        fi
+    done;
+
+    # PARAMETER_VALUE is a global var
+    while echo -n "     * ${TEXT_BOLD} Enter parameter value of the '$PARAMETER_KEY' : ${TEXT_NOMRAL}"; read -r PARAMETER_VALUE;
+    do
+        if [ ! -z "${PARAMETER_VALUE}" ]; then
+            break
+        fi
+    done;
+
+    # check if contains jenkins parameter
+    if [[ ! -z "$PARAMETER_KEY" && ! -z "$PARAMETER_VALUE" ]]; then
+        USE_PARAMETER=true
+    fi
+
+    # build job
+    buildJob $1
 }
 
 # check args
