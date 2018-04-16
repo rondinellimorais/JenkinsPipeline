@@ -18,7 +18,7 @@ export JENKINS_SERVER_URL="YOUR_SERVER_URL_HERE"
 export TEXT_BOLD=`tput bold`
 export TEXT_NOMRAL=`tput sgr0`
 export RED='\033[1;31m'
-export GREEN='\033[0;32m'
+export GREEN='\033[0;33m'
 export NC='\033[0m' # No Color
 
 bindArgs() {
@@ -42,6 +42,7 @@ bindArgs() {
             k) PARAMETER_KEY=${OPTARG};;
             v) PARAMETER_VALUE=${OPTARG};;
             h) SHOW_HELP=true;;
+            *) SHOW_HELP=true;; # default value
      esac
     done
 
