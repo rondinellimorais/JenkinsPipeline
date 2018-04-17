@@ -65,9 +65,9 @@ function select_option {
         for opt; do
             cursor_to $(($startrow + $idx))
             if [ $idx -eq $selected ]; then
-                print_selected "$opt" `echo "${idx} + 1" | bc`
+                print_selected "$opt" "$idx"
             else
-                print_option "$opt" `echo "${idx} + 1" | bc`
+                print_option "$opt" "$idx"
             fi
             ((idx++))
         done
@@ -233,7 +233,7 @@ function showJobs {
 function buildJob {
 
     job=$1
-    echo -e "===== Building job ${TEXT_BOLD}${job} ${TEXT_NOMRAL} =====\n"
+    echo -e "\n===== Building job ${TEXT_BOLD}${job} ${TEXT_NOMRAL} =====\n"
     
     # command for build job
     declare -a  JENKINS_COMMAND
@@ -345,7 +345,7 @@ function showJobParameterQuestion {
 
     while true; do
 
-        echo -n -e "${GREEN}${TEXT_BOLD} Does job '$1' have any parameters?${TEXT_NOMRAL}${NC}${TEXT_BOLD} [Y / n] : ${NC}"; read YES_NO_OPT
+        echo -n -e "${GREEN}${TEXT_BOLD} Do you want to change the parameter values (if any)?${TEXT_NOMRAL}${NC}${TEXT_BOLD} [Y / n] : ${NC}"; read YES_NO_OPT
         case $YES_NO_OPT in
             [Yy]* ) 
                 showJobParameterPrompt $1
@@ -360,26 +360,45 @@ function showJobParameterQuestion {
 
 function showJobParameterPrompt {
 
-    # PARAMETER_KEY is a global var
-    echo "" # new line
-    while echo -n "     * Enter '$1' parameter name : "; read -r PARAMETER_KEY;
-    do
-        if [ ! -z "${PARAMETER_KEY}" ]; then
-            break
-        fi
-    done;
+    # feedback message
+    echo -e "\nPlease wait...\n"
 
-    # PARAMETER_VALUE is a global var
-    while echo -n "     * Enter parameter value of the '$PARAMETER_KEY' : "; read -r PARAMETER_VALUE;
-    do
-        if [ ! -z "${PARAMETER_VALUE}" ]; then
-            break
-        fi
-    done;
+    # get data of job
+    if [ ${USE_AUTH} = true ]; then
+        # user authentication
+        XMLStr=$(java -jar jenkins-cli.jar -noKeyAuth -s ${JENKINS_SERVER_URL} get-job $1 --username ${USER} --password ${PASSWORD})
+    else
+        # ssh authentication
+        XMLStr=$(java -jar jenkins-cli.jar -s ${JENKINS_SERVER_URL} get-job $1)
+    fi
 
-    # check if contains jenkins parameter
-    if [[ ! -z "$PARAMETER_KEY" && ! -z "$PARAMETER_VALUE" ]]; then
-        USE_PARAMETER=true
+    # properties > hudson.model.ParametersDefinitionProperty > parameterDefinitions > name
+    parameterTagPath="/project/properties/hudson.model.ParametersDefinitionProperty/parameterDefinitions/*/name"
+
+    # xml parse
+    result_command=`xmllint --nocdata --shell --xpath ${parameterTagPath} - <<<"${XMLStr}" | sed 's/<[^>]*>/ /g' | sed 's/[^aA-zZ]/ /g'`
+
+    # check last command is success
+    if [ $? == 0 ]; then
+
+        for parameter in ${result_command}; do
+        
+            # PARAMETER_KEY is a global var
+            PARAMETER_KEY=${parameter}
+
+            # PARAMETER_VALUE is a global var
+            while echo -n "     * Enter parameter value of the '$PARAMETER_KEY' : "; read -r PARAMETER_VALUE;
+            do
+                if [ ! -z "${PARAMETER_VALUE}" ]; then
+                    break
+                fi
+            done;
+
+            # check if contains jenkins parameter
+            if [[ ! -z "$PARAMETER_KEY" && ! -z "$PARAMETER_VALUE" ]]; then
+                USE_PARAMETER=true
+            fi
+        done
     fi
 
     # build job
