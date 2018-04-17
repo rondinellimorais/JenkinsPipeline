@@ -12,8 +12,9 @@
 # Cyan         0;36     Light Cyan    1;36
 # Light Gray   0;37     White         1;37
 
-# ============================================================
-#local properties
+# ==============================
+# declare local properties
+# ==============================
 export JENKINS_SERVER_URL="YOUR_SERVER_URL_HERE"
 export TEXT_BOLD=`tput bold`
 export TEXT_NOMRAL=`tput sgr0`
@@ -21,7 +22,11 @@ export RED='\033[1;31m'
 export GREEN='\033[0;33m'
 export NC='\033[0m' # No Color
 
-bindArgs() {
+# ==============================
+# declare functions
+# ==============================
+
+function bindArgs {
 
     # vars of arguments
     export USER
@@ -75,7 +80,7 @@ bindArgs() {
     fi
 }
 
-init(){
+function init {
 
     if [ -d ~/.ssh ] || [ ${USE_AUTH} = true ]; then
         # list jobs when authentication is via ssh or user and password
@@ -85,7 +90,7 @@ init(){
     fi
 }
 
-checkDependece(){
+function checkDependece {
 
     if [ ! -f "jenkins-cli.jar" ]; then
         
@@ -96,7 +101,7 @@ checkDependece(){
     fi
 }
 
-listJobs(){
+function listJobs {
 
     # check if dependeces is install
     checkDependece
@@ -120,7 +125,7 @@ listJobs(){
     showJobs
 }
 
-showJobs(){
+function showJobs {
 
     declare -a user_option_jobs
     index=0
@@ -157,7 +162,7 @@ showJobs(){
     done
 }
 
-buildJob(){
+function buildJob {
 
     job=$1
     echo -e "\n===== Building job ${TEXT_BOLD}${job} ${TEXT_NOMRAL} =====\n"
@@ -205,7 +210,7 @@ buildJob(){
     echo -e "Great! \xF0\x9F\x8D\xBA\n\n"
 }
 
-showHelp(){
+function showHelp {
 
     # usage
     echo -e "usage: ./jenkins [options...]\n"
@@ -228,11 +233,12 @@ showHelp(){
     # support
     echo -e "${GREEN}${TEXT_BOLD}CONTACT:${TEXT_NOMRAL}${NC}\n"
     echo -e "Author...: Rondinelli Morais"
-    echo -e "Twitter..: @rmorais"
-    echo -e "Email....: rondinellimorais@gmail.com\n"
+    echo -e "Twitter..: @rondmorais"
+    echo -e "Email....: rondinellimorais@gmail.com"
+    echo -e "Github...: github.com/rondinellimorais\n"
 }
 
-showAuthenticationPrompt() {
+function showAuthenticationPrompt {
 
     echo -e "\n${GREEN}${TEXT_BOLD}Jenkins authentication:${TEXT_NOMRAL}${NC}\n"
 
@@ -267,7 +273,7 @@ showAuthenticationPrompt() {
     listJobs
 }
 
-showJobParameterQuestion(){
+function showJobParameterQuestion {
 
     echo "" # new build
     while true; do
@@ -285,7 +291,7 @@ showJobParameterQuestion(){
     done
 }
 
-showJobParameterPrompt(){
+function showJobParameterPrompt {
 
     # PARAMETER_KEY is a global var
     echo "" # new line
@@ -312,6 +318,14 @@ showJobParameterPrompt(){
     # build job
     buildJob $1
 }
+
+# Jenkins pipeline start here.
+# This script list e show the jobs on jenkins to build
+#
+#   author   : Rondinelli Morais
+#   twitter  : @rondmorais
+#   email    : rondinellimorais@gmail.com
+#   github   : github.com/rondinellimorais
 
 # check args
 bindArgs $@
