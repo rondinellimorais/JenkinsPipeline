@@ -65,9 +65,9 @@ function select_option {
         for opt; do
             cursor_to $(($startrow + $idx))
             if [ $idx -eq $selected ]; then
-                print_selected "$opt" "$idx"
+                print_selected "$opt" `echo "${idx} + 1" | bc`
             else
-                print_option "$opt" "$idx"
+                print_option "$opt" `echo "${idx} + 1" | bc`
             fi
             ((idx++))
         done
@@ -345,7 +345,7 @@ function showJobParameterQuestion {
 
     while true; do
 
-        echo -n -e "${GREEN}${TEXT_BOLD} Does '$1' have any parameters?${TEXT_NOMRAL}${NC}${TEXT_BOLD} [Y / n] : ${NC}"; read YES_NO_OPT
+        echo -n -e "${GREEN}${TEXT_BOLD} Does job '$1' have any parameters?${TEXT_NOMRAL}${NC}${TEXT_BOLD} [Y / n] : ${NC}"; read YES_NO_OPT
         case $YES_NO_OPT in
             [Yy]* ) 
                 showJobParameterPrompt $1
