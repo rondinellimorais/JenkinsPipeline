@@ -26,6 +26,83 @@ export NC='\033[0m' # No Color
 # declare functions
 # ==============================
 
+# Renders a text based list of options that can be selected by the
+# user using up, down and enter keys and returns the chosen option.
+#
+#   Arguments   : list of options, maximum of 256
+#                 "opt1" "opt2" ...
+#   Return value: selected index (0 for opt1, 1 for opt2 ...)
+#
+# References
+# https://unix.stackexchange.com/a/415155
+function select_option {
+
+    # little helpers for terminal print control and key input
+    ESC=$( printf "\033")
+    cursor_blink_on()  { printf "$ESC[?25h"; }
+    cursor_blink_off() { printf "$ESC[?25l"; }
+    cursor_to()        { printf "$ESC[$1;${2:-1}H"; }
+    print_option()     { printf "  $2) $1 "; }
+    print_selected()   { printf "$ESC[0;36m❯ $2) $1 $ESC[0m"; }
+    get_cursor_row()   { IFS=';' read -sdR -p $'\E[6n' ROW COL; echo ${ROW#*[}; }
+    # key_input()      { this function has removed by Rondinelli Morais, replaced by `read -r -sn1 t` below }
+
+    # initially print empty new lines (scroll down if at bottom of screen)
+    for opt; do printf "\n"; done
+
+    # determine current screen position for overwriting the options
+    local lastrow=`get_cursor_row`
+    local startrow=$(($lastrow - $#))
+
+    # ensure cursor and input echoing back on upon a ctrl+c during read -s
+    trap "cursor_blink_on; stty echo; printf '\n'; exit" 2
+    cursor_blink_off
+
+    local selected=0
+    while true; do
+        # print options by overwriting the last lines
+        local idx=0
+        for opt; do
+            cursor_to $(($startrow + $idx))
+            if [ $idx -eq $selected ]; then
+                print_selected "$opt" "$idx"
+            else
+                print_option "$opt" "$idx"
+            fi
+            ((idx++))
+        done
+
+        # HEX        ASCII
+        # 1b 5b 41   .[A # Up arrow
+        # 1b 5b 42   .[B # Down arrow
+        # 1b 5b 43   .[C # Right arrow
+        # 1b 5b 44   .[D # Left arrow
+        #  |  |  |
+        #  |  |  +------ ASCII A, B, C and D
+        #  |  +--------- ASCII [
+        #  +------------ ASCII ESC
+        #
+        # https://stackoverflow.com/a/25065393
+        read -r -sn1 t
+        case $t in
+            A)  ((selected--));
+                if [ $selected -lt 0 ]; then selected=$(($# - 1)); fi;;
+
+            B)  ((selected++));
+                if [ $selected -ge $# ]; then selected=0; fi;;
+
+           "") break ;;
+        esac
+    done
+
+    # cursor position back to normal
+    cursor_to $lastrow
+    printf "\n"
+    cursor_blink_on
+
+    return $selected
+}
+
 function bindArgs {
 
     # vars of arguments
@@ -137,35 +214,26 @@ function showJobs {
     done
 
     # show user the jobs on list
-    select opt in "${user_option_jobs[@]}" 
-    do
-        if [ ! -z "$opt" ]; then
+    select_option "${user_option_jobs[@]}" 
+    jobname="${user_option_jobs[$?]}"
 
-            # check if contains jenkins parameter
-            if [[ ! -z "$PARAMETER_KEY" && ! -z "$PARAMETER_VALUE" ]]; then
-                
-                # build selected job
-                buildJob $opt
+    # check if contains jenkins parameter
+    if [[ ! -z "$PARAMETER_KEY" && ! -z "$PARAMETER_VALUE" ]]; then
+        
+        # build selected job
+        buildJob $jobname
 
-            else
-                
-                # check job has parameter
-                showJobParameterQuestion $opt
-            fi
-
-            break
-        else 
-            case $opt in
-                *) echo invalid option, try again:;;
-            esac
-        fi
-    done
+    else
+        
+        # check job has parameter
+        showJobParameterQuestion $jobname
+    fi
 }
 
 function buildJob {
 
     job=$1
-    echo -e "\n===== Building job ${TEXT_BOLD}${job} ${TEXT_NOMRAL} =====\n"
+    echo -e "===== Building job ${TEXT_BOLD}${job} ${TEXT_NOMRAL} =====\n"
     
     # command for build job
     declare -a  JENKINS_COMMAND
@@ -243,7 +311,7 @@ function showAuthenticationPrompt {
     echo -e "\n${GREEN}${TEXT_BOLD}Jenkins authentication:${TEXT_NOMRAL}${NC}\n"
 
     # USER is a global var
-    while echo -n "     * ${TEXT_BOLD} Enter jenkins [ username ] : ${TEXT_NOMRAL}"; read -r USER;
+    while echo -n "     * Enter jenkins [ username ] : "; read -r USER;
     do
         if [ ! -z "${USER}" ]; then
             break
@@ -251,7 +319,7 @@ function showAuthenticationPrompt {
     done
 
     # PASSWORD is a global var
-    while echo -n "     * ${TEXT_BOLD} Enter jenkins [ password ] : ${TEXT_NOMRAL}"; read -r -s PASSWORD;
+    while echo -n "     * Enter jenkins [ password ] : "; read -r -s PASSWORD;
     do
         echo "" # new line
         if [ ! -z "${PASSWORD}" ]; then
@@ -275,10 +343,9 @@ function showAuthenticationPrompt {
 
 function showJobParameterQuestion {
 
-    echo "" # new build
     while true; do
 
-        echo -n -e "${GREEN}${TEXT_BOLD}Does '$1' have any parameters?${TEXT_NOMRAL}${NC}${TEXT_BOLD} [Y / n] : ${NC}"; read YES_NO_OPT
+        echo -n -e "${GREEN}${TEXT_BOLD} Does '$1' have any parameters?${TEXT_NOMRAL}${NC}${TEXT_BOLD} [Y / n] : ${NC}"; read YES_NO_OPT
         case $YES_NO_OPT in
             [Yy]* ) 
                 showJobParameterPrompt $1
@@ -295,7 +362,7 @@ function showJobParameterPrompt {
 
     # PARAMETER_KEY is a global var
     echo "" # new line
-    while echo -n "     * ${TEXT_BOLD} Enter '$1' parameter name : ${TEXT_NOMRAL}"; read -r PARAMETER_KEY;
+    while echo -n "     * Enter '$1' parameter name : "; read -r PARAMETER_KEY;
     do
         if [ ! -z "${PARAMETER_KEY}" ]; then
             break
@@ -303,7 +370,7 @@ function showJobParameterPrompt {
     done;
 
     # PARAMETER_VALUE is a global var
-    while echo -n "     * ${TEXT_BOLD} Enter parameter value of the '$PARAMETER_KEY' : ${TEXT_NOMRAL}"; read -r PARAMETER_VALUE;
+    while echo -n "     * Enter parameter value of the '$PARAMETER_KEY' : "; read -r PARAMETER_VALUE;
     do
         if [ ! -z "${PARAMETER_VALUE}" ]; then
             break
