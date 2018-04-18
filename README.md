@@ -119,7 +119,7 @@ ERROR: anonymous is missing the Job/ExtendedRead permission
 
 2. Check if you paste the **ssh public key** into the [SSH keys section](https://jenkins.io/doc/book/resources/managing/cli-adding-ssh-public-keys.png) at [http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure](http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure)
 
-If you ssh public key section is empty, jenkins you will be Authenticated as: anonymous.
+   If you ssh public key section is empty, jenkins you will be Authenticated as: anonymous.
 
 # Author
 Rondinelli Morais, rondinellimorais@gmail.com
