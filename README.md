@@ -108,5 +108,18 @@ I had the same behavior and found out that allowing anonymous read access in the
 
 References: https://stackoverflow.com/questions/30066657/jenkins-cant-found-the-job-when-build-job-why
 
+### Error #3
+```
+[WARN] Failed to authenticate with your SSH keys. Proceeding as anonymous
+
+ERROR: anonymous is missing the Job/ExtendedRead permission
+```
+
+1. If you have used PuttyGen to generate your keys, you will have to [convert them to openssh format](https://stackoverflow.com/questions/2224066/how-to-convert-ssh-keypairs-generated-using-puttygenwindows-into-key-pairs-use). Otherwise Jenkins might silently ignore your keys and you will be Authenticated as: anonymous.
+
+2. Check if you paste the **ssh public key** into the [SSH keys section](https://jenkins.io/doc/book/resources/managing/cli-adding-ssh-public-keys.png) at [http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure](http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure)
+
+   If you ssh public key section is empty, jenkins you will be Authenticated as: anonymous.
+
 # Author
 Rondinelli Morais, rondinellimorais@gmail.com
