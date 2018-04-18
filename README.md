@@ -118,6 +118,7 @@ ERROR: anonymous is missing the Job/ExtendedRead permission
 1. If you have used PuttyGen to generate your keys, you will have to convert them to openssh format. Otherwise Jenkins might silently ignore your keys and you will be Authenticated as: anonymous.
 
 2. Check if you paste the **ssh public key** into the [SSH keys section](https://jenkins.io/doc/book/resources/managing/cli-adding-ssh-public-keys.png) at [http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure](http://YOUR_JENKINS_HOSTNAME/user/YOUR_USERNAME/configure)
+
 If you ssh public key section is empty, jenkins you will be Authenticated as: anonymous.
 
 # Author
