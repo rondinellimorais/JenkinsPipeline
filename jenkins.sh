@@ -372,6 +372,12 @@ function showJobParameterPrompt {
         XMLStr=$(java -jar jenkins-cli.jar -s ${JENKINS_SERVER_URL} get-job $1)
     fi
 
+    # check last command is success
+    if [ $? != 0 ]; then
+        echo
+        exit 1
+    fi
+
     # properties > hudson.model.ParametersDefinitionProperty > parameterDefinitions > name
     parameterTagPath="/project/properties/hudson.model.ParametersDefinitionProperty/parameterDefinitions/*/name"
 
