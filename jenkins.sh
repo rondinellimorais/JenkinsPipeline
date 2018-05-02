@@ -393,11 +393,10 @@ function showJobParameterPrompt {
             PARAMETER_KEY=${parameter}
 
             # PARAMETER_VALUE is a global var
-            while echo -n "     * Enter parameter value of the '$PARAMETER_KEY' : "; read -r PARAMETER_VALUE;
+            while echo -ne "     * $PARAMETER_KEY ${GREEN}($(currentBranchName))${NC}: "; read -r PARAMETER_VALUE;
             do
-                if [ ! -z "${PARAMETER_VALUE}" ]; then
-                    break
-                fi
+                PARAMETER_VALUE=${PARAMETER_VALUE:-$(currentBranchName)}
+                break
             done;
 
             # check if contains jenkins parameter
@@ -409,6 +408,13 @@ function showJobParameterPrompt {
 
     # build job
     buildJob $1
+}
+
+function currentBranchName() {
+    
+    if [ -d "./.git" ]; then
+        echo "$(git branch | grep -E '^\* ' | sed 's/^\* //g')"
+    fi
 }
 
 # Jenkins pipeline start here.
